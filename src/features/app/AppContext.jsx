@@ -9,7 +9,7 @@ const useAppContext = () => {
   return useContext(AppContext);
 };
 
-// Setup inital app state
+// Setup initial app state
 const initialState = {
   isMapLocked: false,
   mapAttributes: {
@@ -29,7 +29,7 @@ const initialState = {
   },
 };
 
-// Setup reducer funtion
+// Setup reducer function
 const reducer = (state, { type, payload }) => {
   switch (type) {
     case 'lockMap':
@@ -108,7 +108,6 @@ const AppContextProvider = ({ children }) => {
   return <AppContext.Provider value={{ state, dispatch }}>{children}</AppContext.Provider>;
 };
 
-// Declare prop types for AppContextProvider
 AppContextProvider.propTypes = {
   children: PropTypes.arrayOf(PropTypes.elementType),
 };
