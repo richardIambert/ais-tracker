@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types';
 import { createContext, useContext, useReducer } from 'react';
+import PropTypes from 'prop-types';
 
 // AppContext
 const AppContext = createContext(null);
@@ -11,16 +11,24 @@ const useAppContext = () => {
 
 // Setup inital app state
 const initialState = {
-  test: false,
+  mapAccessToken: import.meta.env.VITE_MAPBOX_ACCESS_TOKEN,
+  mapStyle: import.meta.env.VITE_MAPBOX_STYLE,
+  mapViewState: {
+    latitude: 55.97457945987327,
+    longitude: -4.8194054976762,
+    zoom: 11,
+  },
 };
 
 // Setup reducer funtion
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'test':
+const reducer = (state, { type, payload }) => {
+  switch (type) {
+    case 'updateMapViewState':
       return {
         ...state,
-        test: !state.test,
+        mapViewState: {
+          ...payload,
+        },
       };
     default:
       return state;
