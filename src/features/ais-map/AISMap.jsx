@@ -7,12 +7,19 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 const AISMap = ({ children }) => {
   const { state, dispatch } = useAppContext();
 
-  const onMove = useCallback(({ viewState }) => {
-    dispatch({ type: 'updateMapViewState', payload: viewState });
-  }, []);
+  const onMove = useCallback(
+    ({ viewState }) => {
+      dispatch({ type: 'updateMapViewState', payload: viewState });
+    },
+    [dispatch]
+  );
 
   return (
-    <Map {...state.mapViewState} {...state.mapAttributes} onMove={onMove}>
+    <Map
+      {...state.mapViewState}
+      {...state.mapAttributes}
+      onMove={onMove}
+    >
       {children}
     </Map>
   );

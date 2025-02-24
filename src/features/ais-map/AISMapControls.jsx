@@ -83,7 +83,10 @@ const AISMapControls = () => {
           <FaLockOpen className="pointer-events-none" />
         )}
       </AISMapControl>
-      <img src={cornerHackTopRight} className="size-2 absolute bottom-0 right-0 translate-y-full" />
+      <img
+        src={cornerHackTopRight}
+        className="size-2 absolute bottom-0 right-0 translate-y-full"
+      />
     </div>
   );
 };

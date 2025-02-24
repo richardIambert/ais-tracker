@@ -2,18 +2,21 @@ import PropTypes from 'prop-types';
 import { useAppContext } from '../app';
 import { useCallback } from 'react';
 
-const AISMapControl = ({ className = '', children, ...rest }) => {
+const AISMapControl = ({ children, className = '', ...rest }) => {
   const { dispatch } = useAppContext();
 
-  const handleClick = useCallback((event) => {
-    dispatch({ type: event.target.dataset.action });
-  }, []);
+  const handleClick = useCallback(
+    (event) => {
+      dispatch({ type: event.target.dataset.action });
+    },
+    [dispatch]
+  );
 
   return (
     <button
-      className={`size-10 flex items-center justify-center rounded-lg bg-grey-300 text-grey-500 ${className}`}
-      {...rest}
+      className={`bg-grey-200 flex items-center justify-center rounded-lg size-10 text-grey-500 ${className}`}
       onClick={handleClick}
+      {...rest}
     >
       {children}
     </button>

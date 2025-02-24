@@ -27,6 +27,42 @@ const initialState = {
     longitude: -4.8194054976762,
     zoom: 11,
   },
+  AISReportsFilter: '',
+  AISReports: [
+    {
+      COG: 320,
+      HDG: 315,
+      isPinned: false,
+      latitude: -50.12345678,
+      longitude: 4.0123456789,
+      MMSI: '23458000',
+      name: 'HMS Cattistock',
+      SOG: 2.4,
+      type: 'PositionReport',
+    },
+    {
+      COG: 320,
+      HDG: 315,
+      isPinned: false,
+      latitude: -50.12345678,
+      longitude: 4.0123456789,
+      MMSI: '235090402',
+      name: 'SD Northern River',
+      SOG: 0,
+      type: 'PositionReport',
+    },
+    {
+      COG: 320,
+      HDG: 315,
+      isPinned: false,
+      latitude: -50.12345678,
+      longitude: 4.0123456789,
+      MMSI: '232001480',
+      name: 'SD Impulse',
+      SOG: 0,
+      type: 'PositionReport',
+    },
+  ],
 };
 
 // Setup reducer function
@@ -96,6 +132,22 @@ const reducer = (state, { type, payload }) => {
           ...state.mapViewState,
           zoom: state.mapViewState.zoom - 0.5,
         },
+      };
+    case 'updateAISReportsFilter':
+      return {
+        ...state,
+        AISReportsFilter: payload,
+      };
+    case 'toggleIsAISReportPinned':
+      return {
+        ...state,
+        AISReports: [
+          ...state.AISReports.map((AISReport) =>
+            AISReport.MMSI === payload.MMSI
+              ? { ...AISReport, isPinned: !AISReport.isPinned }
+              : AISReport
+          ),
+        ],
       };
     default:
       return state;

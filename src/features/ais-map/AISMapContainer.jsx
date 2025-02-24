@@ -1,9 +1,11 @@
 import AISMap from './AISMap';
 import AISMapControls from './AISMapControls';
+import { AISReportStatistics } from '../ais-report';
 
 const AISMapContainer = () => {
   return (
-    <div className="w-full h-full relative rounded-lg overflow-hidden">
+    <div className="h-full overflow-hidden relative rounded-lg w-full">
+      <AISReportStatistics />
       <AISMapControls />
       <AISMap />
     </div>

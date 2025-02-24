@@ -2,8 +2,18 @@
 
 @theme {
   --color-blue-500: #0c5aba;
+  --color-grey-200: #ebebeb;
   --color-grey-300: #cecece;
   --color-grey-400: #797979;
   --color-grey-500: #252424;
   --color-orange-500: #fa4b04;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
