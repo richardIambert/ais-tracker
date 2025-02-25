@@ -1,10 +1,10 @@
+import { AISReportMarker } from '../ais-report';
 import Map from 'react-map-gl/mapbox';
-import PropTypes from 'prop-types';
 import { useAppContext } from '../app';
 import { useCallback } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-const AISMap = ({ children }) => {
+const AISMap = () => {
   const { state, dispatch } = useAppContext();
 
   const onMove = useCallback(
@@ -20,13 +20,14 @@ const AISMap = ({ children }) => {
       {...state.mapAttributes}
       onMove={onMove}
     >
-      {children}
+      {state.AISReports.map((AISReport) => (
+        <AISReportMarker
+          key={AISReport.MMSI}
+          report={AISReport}
+        />
+      ))}
     </Map>
   );
-};
-
-AISMap.propTypes = {
-  children: PropTypes.arrayOf(PropTypes.elementType),
 };
 
 export default AISMap;
