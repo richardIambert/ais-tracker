@@ -42,7 +42,7 @@ webSocketProxy.on('connection', (clientConnection) => {
       };
       // And `aisStreamConnection` ready state is OPEN
       if (aisStreamConnection.OPEN) {
-        // Send the update message over `aisStreamConnecion`
+        // Send the update message over `aisStreamConnection`
         aisStreamConnection.send(JSON.stringify(update));
       } else {
         // Otherwise, wait before sending the update message over `aisStreamConnection`
