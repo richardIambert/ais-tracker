@@ -1,9 +1,10 @@
 import 'dotenv/config';
 import { WebSocket, WebSocketServer } from 'ws';
 
-const port = process.env.PORT || 8080;
-const SOCKET_WAIT_TIME = process.env.SOCKET_WAIT_TIME || 1000;
-const AISSTREAM_SOCKET_UPDATE = process.env.AISSTREAM_SOCKET_UPDATE || 'AISStreamSocketUpdate';
+const port = process.env.PORT;
+const SOCKET_WAIT_TIME = process.env.SOCKET_WAIT_TIME;
+const AISSTREAM_API_KEY = process.env.AISSTREAM_API_KEY;
+const AISSTREAM_SOCKET_UPDATE = process.env.AISSTREAM_SOCKET_UPDATE;
 
 const webSocketProxy = new WebSocketServer({ port });
 
@@ -34,7 +35,7 @@ webSocketProxy.on('connection', (clientConnection) => {
     // If the received message type is a socket update
     if (message.type === AISSTREAM_SOCKET_UPDATE) {
       const update = {
-        Apikey: process.env.AISSTREAM_API_KEY,
+        Apikey: AISSTREAM_API_KEY,
         BoundingBoxes: message.boundingBoxes,
         FilterMessageTypes: message.filterMessageTypes,
         FilterShipMMSI: message.filterShipMMSI,

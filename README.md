@@ -30,10 +30,14 @@ pnpm install
 
 Head over to [aisstream.io](https://aisstream.io/apikeys) and create a free API key.
 
-Create a local `.env` file in the root of the project and add your key as `AISSTREAM_API_KEY`.
+Create a local `.env` file in the root of the project and add the following:
 
 ```
-AISSTREAM_API_KEY=<your_key_here>
+PORT=8080
+SOCKET_WAIT_TIME=1000
+AISSTREAM_SOCKET_UPDATE=AISStreamSocketUpdate
+AISSTREAM_API_URL=wss://stream.aisstream.io/v0/stream
+AISSTREAM_API_KEY=<your_aisstream_api_key_here>
 ```
 
 ### 4. Run the server
