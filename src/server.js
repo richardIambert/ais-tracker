@@ -4,62 +4,68 @@ import { WebSocket, WebSocketServer } from 'ws';
 const port = process.env.PORT;
 const SOCKET_WAIT_TIME = process.env.SOCKET_WAIT_TIME;
 const AISSTREAM_API_KEY = process.env.AISSTREAM_API_KEY;
-const AISSTREAM_SOCKET_UPDATE = process.env.AISSTREAM_SOCKET_UPDATE;
 
 const webSocketProxy = new WebSocketServer({ port });
 
 webSocketProxy.on('connection', (clientConnection) => {
-  // Create upstream connection to aisstream.io
+  console.log('WebSocket connection opened: client <-> proxy');
+  // Establish upstream connection to aisstream.io
   const aisStreamConnection = new WebSocket(process.env.AISSTREAM_API_URL);
 
-  // Pass messages recieved on `aisStreamConnection` through to `clientConnection`
-  aisStreamConnection.on('message', (event) => {
-    clientConnection.send(event.data.toString());
+  aisStreamConnection.on('open', () => {
+    console.log('WebSocket connection opened: proxy <-> aisstream.io');
   });
 
-  aisStreamConnection.on('close', () => {
-    // TODO: Implement check close condition and recovery
-    // TODO: Relay close over `clientConnection`
-    console.log('WebSocket connection to aisstream.io closed');
+  // Relay messages recieved on `aisStreamConnection` to `clientConnection`
+  aisStreamConnection.on('message', (message) => {
+    console.log('Message recieved: proxy <- aisstream.io');
+    console.log('Relaying message: client <- proxy');
+    clientConnection.send(message.toString());
   });
 
-  aisStreamConnection.on('error', (error) => {
-    // TODO: Implement recovery
-    // TODO: Relay error over `clientConnection`
-    console.error(`WebSocket connection to aisstream.io: error: ${error}`);
-  });
-
-  // Send messages received on `clientConnection` over `aisStreamConnection`
-  clientConnection.on('message', (data) => {
-    const message = JSON.parse(data.toString());
-    // If the received message type is a socket update
-    if (message.type === AISSTREAM_SOCKET_UPDATE) {
-      const update = {
-        Apikey: AISSTREAM_API_KEY,
-        BoundingBoxes: message.boundingBoxes,
-        FilterMessageTypes: message.filterMessageTypes,
-        FilterShipMMSI: message.filterShipMMSI,
-      };
-      // And `aisStreamConnection` ready state is OPEN
-      if (aisStreamConnection.OPEN) {
-        // Send the update message over `aisStreamConnection`
-        aisStreamConnection.send(JSON.stringify(update));
-      } else {
-        // Otherwise, wait before sending the update message over `aisStreamConnection`
-        setTimeout(() => {
-          aisStreamConnection.send(JSON.stringify(update));
-        }, SOCKET_WAIT_TIME);
-      }
+  aisStreamConnection.on('close', (code) => {
+    console.log(`WebSocket connection closed: proxy <-X-> aisstream.io: ${code}`);
+    if (clientConnection.readyState < 2) {
+      console.log('Closing WebSocket connection: client <-?-> proxy');
+      clientConnection.close();
     }
   });
 
-  clientConnection.on('close', () => {
-    aisStreamConnection.close();
-    console.log('WebSocket connection to client closed');
+  aisStreamConnection.on('error', (error) => {
+    console.error(`WebSocket connection error: proxy <-X-> aisstream.io: ${error}`);
+  });
+
+  // Relay messages received on `clientConnection` to `aisStreamConnection`
+  clientConnection.on('message', (message) => {
+    console.log('Message received: client -> proxy');
+    console.log('Relaying message: proxy -> aisstream.io');
+
+    const { boundingBoxes, filterMessageTypes, filterShipMMSI } = JSON.parse(message.toString());
+    const update = {
+      APIKey: AISSTREAM_API_KEY,
+      BoundingBoxes: boundingBoxes,
+      FilterMessageTypes: filterMessageTypes,
+      FilterShipMMSI: filterShipMMSI,
+    };
+    if (aisStreamConnection.readyState === 1) {
+      aisStreamConnection.send(JSON.stringify(update));
+    } else {
+      setTimeout(() => {
+        aisStreamConnection.send(JSON.stringify(update));
+      }, SOCKET_WAIT_TIME);
+    }
+  });
+
+  clientConnection.on('close', (code) => {
+    console.log(`WebSocket connection closed: client <-X-> proxy: ${code}`);
+    if (aisStreamConnection.readyState < 2) {
+      console.log('Closing WebSocket connection: proxy <-?-> aisstream.io');
+      aisStreamConnection.close();
+    }
   });
 
   clientConnection.on('error', (error) => {
-    console.error(`WebSocket connection to client: error: ${error}`);
+    console.error(`WebSocket connection error: client <-X-> proxy: ${error}`);
   });
 });
 
