@@ -14,11 +14,25 @@ const AISMap = () => {
     [dispatch]
   );
 
+  const onLoad = useCallback(
+    (event) => {
+      const boundingBoxes = [
+        event.target
+          .getBounds()
+          .toArray()
+          .map((bounds) => bounds.reverse()),
+      ];
+      dispatch({ type: 'updateWebSocketSubscription', payload: { boundingBoxes } });
+    },
+    [dispatch]
+  );
+
   return (
     <Map
       {...state.mapViewState}
       {...state.mapAttributes}
       onMove={onMove}
+      onLoad={onLoad}
     >
       {state.AISReports.map((AISReport) => (
         <AISReportMarker

@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer } from 'react';
+import { createContext, useContext, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
 
 // AppContext
@@ -28,64 +28,39 @@ const initialState = {
     zoom: 11,
   },
   AISReportsFilter: '',
-  AISReports: [
-    {
-      COG: 0,
-      HDG: 0,
-      isPinned: false,
-      latitude: 55.97457945987327,
-      longitude: -4.85,
-      MMSI: '23458000',
-      name: 'HMS Cattistock',
-      SOG: 0,
-      type: 'PositionReport',
-    },
-    {
-      COG: 90,
-      HDG: 90,
-      isPinned: false,
-      latitude: 55.97457945987327,
-      longitude: -4.8,
-      MMSI: '235090402',
-      name: 'SD Northern River',
-      SOG: 0,
-      type: 'PositionReport',
-    },
-    {
-      COG: 180,
-      HDG: 180,
-      isPinned: false,
-      latitude: 55.97457945987327,
-      longitude: -4.75,
-      MMSI: '232001480',
-      name: 'SD Impulse',
-      SOG: 0,
-      type: 'PositionReport',
-    },
-  ],
+  AISReports: [],
+  webSocket: null,
+  webSocketSubscription: {
+    boundingBoxes: [],
+    filterMessageTypes: ['PositionReport'],
+    filterShipMMSI: [],
+  },
 };
 
 // Setup reducer function
 const reducer = (state, { type, payload }) => {
   switch (type) {
-    case 'lockMap':
+    case 'lockMap': {
       return {
         ...state,
         isMapLocked: true,
       };
-    case 'unlockMap':
+    }
+    case 'unlockMap': {
       return {
         ...state,
         isMapLocked: false,
       };
-    case 'updateMapViewState':
+    }
+    case 'updateMapViewState': {
       return {
         ...state,
         mapViewState: {
           ...payload,
         },
       };
-    case 'panMapUp':
+    }
+    case 'panMapUp': {
       return {
         ...state,
         mapViewState: {
@@ -93,7 +68,8 @@ const reducer = (state, { type, payload }) => {
           latitude: state.mapViewState.latitude + 0.05,
         },
       };
-    case 'panMapDown':
+    }
+    case 'panMapDown': {
       return {
         ...state,
         mapViewState: {
@@ -101,7 +77,8 @@ const reducer = (state, { type, payload }) => {
           latitude: state.mapViewState.latitude - 0.05,
         },
       };
-    case 'panMapLeft':
+    }
+    case 'panMapLeft': {
       return {
         ...state,
         mapViewState: {
@@ -109,7 +86,8 @@ const reducer = (state, { type, payload }) => {
           longitude: state.mapViewState.longitude - 0.05,
         },
       };
-    case 'panMapRight':
+    }
+    case 'panMapRight': {
       return {
         ...state,
         mapViewState: {
@@ -117,7 +95,8 @@ const reducer = (state, { type, payload }) => {
           longitude: state.mapViewState.longitude + 0.05,
         },
       };
-    case 'zoomMapIn':
+    }
+    case 'zoomMapIn': {
       return {
         ...state,
         mapViewState: {
@@ -125,7 +104,8 @@ const reducer = (state, { type, payload }) => {
           zoom: state.mapViewState.zoom + 0.5,
         },
       };
-    case 'zoomMapOut':
+    }
+    case 'zoomMapOut': {
       return {
         ...state,
         mapViewState: {
@@ -133,12 +113,34 @@ const reducer = (state, { type, payload }) => {
           zoom: state.mapViewState.zoom - 0.5,
         },
       };
-    case 'updateAISReportsFilter':
+    }
+    case 'updateAISReports': {
+      const existingAISReport = state.AISReports.find(
+        (AISReport) => AISReport.MMSI === payload.MMSI
+      );
+      if (existingAISReport) {
+        return {
+          ...state,
+          AISReports: state.AISReports.map((AISReport) =>
+            AISReport.MMSI === payload.MMSI
+              ? { ...AISReport, ...payload, isPinned: AISReport.isPinned || false }
+              : AISReport
+          ),
+        };
+      } else {
+        return {
+          ...state,
+          AISReports: [{ ...payload }, ...state.AISReports],
+        };
+      }
+    }
+    case 'updateAISReportsFilter': {
       return {
         ...state,
         AISReportsFilter: payload,
       };
-    case 'toggleIsAISReportPinned':
+    }
+    case 'toggleIsAISReportPinned': {
       return {
         ...state,
         AISReports: [
@@ -149,14 +151,90 @@ const reducer = (state, { type, payload }) => {
           ),
         ],
       };
-    default:
+    }
+    case 'initialiseWebSocket': {
+      return {
+        ...state,
+        webSocket: payload.webSocket,
+      };
+    }
+    case 'updateWebSocketSubscription': {
+      return {
+        ...state,
+        webSocketSubscription: {
+          ...state.webSocketSubscription,
+          ...payload,
+        },
+      };
+    }
+    default: {
       return state;
+    }
   }
 };
 
 // AppContextProvider wrapper
 const AppContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    const webSocket = new WebSocket(import.meta.env.VITE_WEB_SOCKET_URL);
+    dispatch({ type: 'initialiseWebSocket', payload: { webSocket } });
+
+    webSocket.addEventListener('open', () => {
+      console.log(`WebSocket connection opened: client <-> ${import.meta.env.VITE_WEB_SOCKET_URL}`);
+    });
+
+    webSocket.addEventListener('message', (message) => {
+      const { MessageType: type, Message, MetaData } = JSON.parse(message.data);
+      const {
+        Cog: COG,
+        Latitude: latitude,
+        Longitude: longitude,
+        Sog: SOG,
+        TrueHeading: HDG,
+      } = Message[type];
+      const { MMSI, ShipName: name, time_utc: timestamp } = MetaData;
+      dispatch({
+        type: 'updateAISReports',
+        payload: {
+          COG,
+          HDG,
+          isPinned: false,
+          latitude,
+          longitude,
+          MMSI,
+          name,
+          SOG,
+          timestamp,
+          type,
+        },
+      });
+    });
+
+    webSocket.addEventListener('close', ({ code }) => {
+      console.log(
+        `WebSocket connection closed: client <-X-> ${import.meta.env.VITE_WEB_SOCKET_URL}: ${code}`
+      );
+    });
+
+    webSocket.addEventListener('error', (error) => {
+      console.log(
+        `WebSocket connection error: client <-X-> ${import.meta.env.VITE_WEB_SOCKET_URL}: ${error}`
+      );
+    });
+
+    return () => {
+      webSocket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (state.webSocket && state.webSocket.readyState === 1) {
+      state.webSocket.send(JSON.stringify(state.webSocketSubscription));
+    }
+  }, [state.webSocket, state.webSocketSubscription]);
+
   return <AppContext.Provider value={{ state, dispatch }}>{children}</AppContext.Provider>;
 };
 
