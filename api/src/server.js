@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import { WebSocket, WebSocketServer } from 'ws';
 
-const port = process.env.PORT;
-const SOCKET_WAIT_TIME = process.env.SOCKET_WAIT_TIME;
+const port = process.env.API_PORT;
+const WAIT_TIME = process.env.WAIT_TIME;
 const AISSTREAM_API_KEY = process.env.AISSTREAM_API_KEY;
 
 const webSocketProxy = new WebSocketServer({ port });
@@ -52,7 +52,7 @@ webSocketProxy.on('connection', (clientConnection) => {
     } else {
       setTimeout(() => {
         aisStreamConnection.send(JSON.stringify(update));
-      }, SOCKET_WAIT_TIME);
+      }, WAIT_TIME);
     }
   });
 

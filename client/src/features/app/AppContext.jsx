@@ -13,8 +13,8 @@ const useAppContext = () => {
 const initialState = {
   isMapLocked: false,
   mapAttributes: {
-    mapboxAccessToken: import.meta.env.VITE_MAPBOX_ACCESS_TOKEN,
-    mapStyle: import.meta.env.VITE_MAPBOX_STYLE,
+    mapboxAccessToken: import.meta.env.VITE_MAPBOX_API_KEY,
+    mapStyle: import.meta.env.VITE_MAPBOX_STYLE_URL,
     style: { width: '100%', height: '100%' },
     interactive: false,
     minPitch: 0,
@@ -23,8 +23,12 @@ const initialState = {
     maxZoom: 16,
   },
   mapViewState: {
-    latitude: 55.97457945987327,
-    longitude: -4.8194054976762,
+    // Faslane
+    // latitude: 55.97457945987327,
+    // longitude: -4.8194054976762,
+    // Portsmouth
+    latitude: 50.8208,
+    longitude: -1.1203,
     zoom: 11,
   },
   AISReportsFilter: '',
@@ -115,9 +119,7 @@ const reducer = (state, { type, payload }) => {
       };
     }
     case 'updateAISReports': {
-      const existingAISReport = state.AISReports.find(
-        (AISReport) => AISReport.MMSI === payload.MMSI
-      );
+      const existingAISReport = state.AISReports.find((AISReport) => AISReport.MMSI === payload.MMSI);
       if (existingAISReport) {
         return {
           ...state,
@@ -145,9 +147,7 @@ const reducer = (state, { type, payload }) => {
         ...state,
         AISReports: [
           ...state.AISReports.map((AISReport) =>
-            AISReport.MMSI === payload.MMSI
-              ? { ...AISReport, isPinned: !AISReport.isPinned }
-              : AISReport
+            AISReport.MMSI === payload.MMSI ? { ...AISReport, isPinned: !AISReport.isPinned } : AISReport
           ),
         ],
       };
@@ -178,22 +178,16 @@ const AppContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    const webSocket = new WebSocket(import.meta.env.VITE_WEB_SOCKET_URL);
+    const webSocket = new WebSocket(import.meta.env.VITE_API_URL);
     dispatch({ type: 'initialiseWebSocket', payload: { webSocket } });
 
     webSocket.addEventListener('open', () => {
-      console.log(`WebSocket connection opened: client <-> ${import.meta.env.VITE_WEB_SOCKET_URL}`);
+      console.log(`WebSocket connection opened: client <-> ${import.meta.env.VITE_API_URL}`);
     });
 
     webSocket.addEventListener('message', (message) => {
       const { MessageType: type, Message, MetaData } = JSON.parse(message.data);
-      const {
-        Cog: COG,
-        Latitude: latitude,
-        Longitude: longitude,
-        Sog: SOG,
-        TrueHeading: HDG,
-      } = Message[type];
+      const { Cog: COG, Latitude: latitude, Longitude: longitude, Sog: SOG, TrueHeading: HDG } = Message[type];
       const { MMSI, ShipName: name, time_utc: timestamp } = MetaData;
       dispatch({
         type: 'updateAISReports',
@@ -213,15 +207,11 @@ const AppContextProvider = ({ children }) => {
     });
 
     webSocket.addEventListener('close', ({ code }) => {
-      console.log(
-        `WebSocket connection closed: client <-X-> ${import.meta.env.VITE_WEB_SOCKET_URL}: ${code}`
-      );
+      console.log(`WebSocket connection closed: client <-X-> ${import.meta.env.VITE_API_URL}: ${code}`);
     });
 
     webSocket.addEventListener('error', (error) => {
-      console.log(
-        `WebSocket connection error: client <-X-> ${import.meta.env.VITE_WEB_SOCKET_URL}: ${error}`
-      );
+      console.log(`WebSocket connection error: client <-X-> ${import.meta.env.VITE_API_URL}: ${error}`);
     });
 
     return () => {
