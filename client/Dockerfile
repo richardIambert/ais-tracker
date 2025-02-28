@@ -1,4 +1,4 @@
-FROM node:18 AS builder
+FROM node:23-alpine AS builder
 
 ARG VITE_MAPBOX_API_KEY
 ARG VITE_MAPBOX_STYLE_URL
@@ -19,6 +19,8 @@ COPY . .
 RUN npm run build
 
 FROM nginx:alpine AS production
+
+RUN apk update && apk upgrade
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 

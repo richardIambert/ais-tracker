@@ -1,4 +1,6 @@
-FROM node:18
+FROM node:23-alpine
+
+RUN apk update && apk upgrade
 
 WORKDIR /app
 
