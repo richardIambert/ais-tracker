@@ -1,3 +1,12 @@
+const formatBoundingBoxes = (map) => {
+  return [
+    map
+      .getBounds()
+      .toArray()
+      .map((bounds) => bounds.reverse()),
+  ];
+};
+
 const formatCOG = (COG) => {
   const unknownValue = '???';
   if (typeof COG !== 'number') return unknownValue;
@@ -26,4 +35,11 @@ const formatSOG = (SOG) => {
 
 const formatTimeElapsed = (timestamp) => {};
 
-export { formatCOG, formatHDG, formatPosition, formatSOG, formatTimeElapsed };
+export {
+  formatBoundingBoxes,
+  formatCOG,
+  formatHDG,
+  formatPosition,
+  formatSOG,
+  formatTimeElapsed,
+};

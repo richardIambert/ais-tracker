@@ -6,6 +6,7 @@ services:
       - API_PORT=${API_PORT}
       - AISSTREAM_API_KEY=${AISSTREAM_API_KEY}
       - AISSTREAM_API_URL=${AISSTREAM_API_URL}
+      - FORCE_COLOR=${FORCE_COLOR}
       - WAIT_TIME=${WAIT_TIME}
     ports:
       - 3000:3000

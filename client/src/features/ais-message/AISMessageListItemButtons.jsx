@@ -1,12 +1,12 @@
 import { CornerHack } from '../../components';
 import PropTypes from 'prop-types';
 
-const AISMapControls = ({ children }) => {
+const AISMessageListItemButtons = ({ children }) => {
   return (
-    <div className="p-2 pr-0 absolute z-10 right-0 top-1/2 -translate-y-1/2 grid gap-2 rounded-l-lg bg-white">
+    <div className="absolute top-0 right-0 pl-2 pb-2 rounded-bl-lg bg-white">
       <CornerHack
-        className="top-0 right-0 -translate-y-full"
-        type="bottom-right"
+        className="top-0 left-0 -translate-x-full"
+        type="top-right"
       />
       {children}
       <CornerHack
@@ -17,8 +17,8 @@ const AISMapControls = ({ children }) => {
   );
 };
 
-AISMapControls.propTypes = {
+AISMessageListItemButtons.propTypes = {
   children: PropTypes.arrayOf(PropTypes.elementType),
 };
 
-export default AISMapControls;
+export default AISMessageListItemButtons;

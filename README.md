@@ -37,6 +37,7 @@ Create a `.env` file in the project root directory and add the following:
 API_PORT=3000
 AISSTREAM_API_KEY=<YOUR_AISSTREAM_API_KEY>
 AISSTREAM_API_URL=wss://stream.aisstream.io/v0/stream
+FORCE_COLOR=1
 WAIT_TIME=1000
 
 # Client environment variables

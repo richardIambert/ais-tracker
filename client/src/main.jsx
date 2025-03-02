@@ -1,9 +1,13 @@
+import { App } from './features/app';
+import { AISMapContextProvider } from './features/ais-map';
+import { AISMessageContextProvider } from './features/ais-message';
 import { createRoot } from 'react-dom/client';
-import { App, AppContextProvider } from './features/app';
 import './index.css';
 
 createRoot(document.getElementById('root')).render(
-  <AppContextProvider>
-    <App />
-  </AppContextProvider>
+  <AISMessageContextProvider>
+    <AISMapContextProvider>
+      <App />
+    </AISMapContextProvider>
+  </AISMessageContextProvider>
 );

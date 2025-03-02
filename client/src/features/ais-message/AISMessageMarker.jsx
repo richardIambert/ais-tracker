@@ -1,24 +1,26 @@
-import AISReportMarkerIcon from '../../assets/ais-report-marker-icon.svg';
+import AISMessageMarkerIcon from '../../assets/ais-message-marker-icon.svg';
 import { Marker } from 'react-map-gl/mapbox';
 import PropTypes from 'prop-types';
 
-const AISReportMarker = ({ report }) => {
-  const { HDG, isPinned, latitude, longitude } = report;
+const AISMessageMarker = ({ message }) => {
+  const { HDG, isPinned, latitude, longitude } = message;
   return (
     <Marker
+      className="border-2 size-5"
       latitude={latitude}
       longitude={longitude}
       rotation={HDG}
-      className="border-2 size-5"
-      style={{ borderColor: isPinned ? 'var(--color-orange-500)' : 'transparent' }}
+      style={{
+        borderColor: isPinned ? 'var(--color-orange-500)' : 'transparent',
+      }}
     >
-      <img src={AISReportMarkerIcon} />
+      <img src={AISMessageMarkerIcon} />
     </Marker>
   );
 };
 
-AISReportMarker.propTypes = {
-  report: PropTypes.shape({
+AISMessageMarker.propTypes = {
+  message: PropTypes.shape({
     COG: PropTypes.number,
     HDG: PropTypes.number,
     isPinned: PropTypes.bool.isRequired,
@@ -28,11 +30,11 @@ AISReportMarker.propTypes = {
     name: PropTypes.string.isRequired,
     SOG: PropTypes.number,
     type: PropTypes.oneOf([
-      'AidsToNavigationReport',
-      'PositionReport',
-      'StandardClassBPositionReport',
+      'AidsToNavigationMessage',
+      'PositionMessage',
+      'StandardClassBPositionMessage',
     ]),
   }),
 };
 
-export default AISReportMarker;
+export default AISMessageMarker;
