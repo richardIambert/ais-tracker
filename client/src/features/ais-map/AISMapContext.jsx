@@ -12,6 +12,7 @@ const initialState = {
     mapboxAccessToken: import.meta.env.VITE_MAPBOX_API_KEY,
     mapStyle: import.meta.env.VITE_MAPBOX_STYLE_URL,
     style: { width: '100%', height: '100%' },
+    attributionControl: false,
     interactive: false,
     minPitch: 0,
     maxPitch: 0,
@@ -23,7 +24,7 @@ const initialState = {
     pan: 0.1,
     zoom: 1,
   },
-  initialViewState: {
+  viewState: {
     latitude: 55.97457945987327,
     longitude: -4.8194054976762,
     zoom: 11,
@@ -40,19 +41,22 @@ const reducer = (state, { type, payload }) => {
         BoundingBoxes: payload,
       };
     }
-    case 'setDeltaPan': {
-      return {
-        ...state,
-        delta: {
-          ...state.delta,
-          pan: { 11: 0.1, 12: 0.05, 13: 0.025 }[payload],
-        },
-      };
-    }
     case 'setRef': {
       return {
         ...state,
         ref: payload,
+      };
+    }
+    case 'setViewState': {
+      return {
+        ...state,
+        delta: {
+          ...state.delta,
+          pan: { 11: 0.1, 12: 0.05, 13: 0.025 }[payload.zoom],
+        },
+        viewState: {
+          ...payload,
+        },
       };
     }
     case 'toggleIsLocked': {

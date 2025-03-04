@@ -19,11 +19,12 @@ const formatHDG = (HDG) => {
   return HDG.toString().padStart(3, '0');
 };
 
-const formatPosition = (position) => {
+const formatPosition = (position, precision = 4) => {
   const unknownValue = ' ???.????';
-  if (typeof position !== 'number') return unknownValue;
+  position = Number(position);
+  if (isNaN(position)) return unknownValue;
   const regex = /^(?<sign>-?)(?<beginning>\d+)\.(?<end>\d+)$/;
-  const match = position.toFixed(4).toString().match(regex);
+  const match = position.toFixed(precision).toString().match(regex);
   if (!match) return unknownValue;
   const { sign, beginning, end } = match.groups;
   return `${sign}${beginning.padStart(3, '0')}.${end}`.padStart(9, ' ');
@@ -35,11 +36,4 @@ const formatSOG = (SOG) => {
 
 const formatTimeElapsed = (timestamp) => {};
 
-export {
-  formatBoundingBoxes,
-  formatCOG,
-  formatHDG,
-  formatPosition,
-  formatSOG,
-  formatTimeElapsed,
-};
+export { formatBoundingBoxes, formatCOG, formatHDG, formatPosition, formatSOG, formatTimeElapsed };
