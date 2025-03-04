@@ -52,7 +52,7 @@ VITE_API_URL=ws://localhost:3000
 From the project root directory, run:
 
 ```bash
-docker compose up
+docker compose --profile production up
 ```
 
 #### 6. Open the app

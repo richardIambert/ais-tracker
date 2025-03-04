@@ -30,7 +30,6 @@ const initialState = {
     zoom: 11,
   },
   isLocked: false,
-  ref: null,
 };
 
 const reducer = (state, { type, payload }) => {

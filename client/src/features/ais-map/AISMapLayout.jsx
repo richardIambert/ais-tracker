@@ -1,14 +1,5 @@
-import {
-  AISMap,
-  AISMapControls,
-  AISMapMovementControl,
-  AISMapToggleLockControl,
-} from '.';
-import {
-  AISMessageSummary,
-  AISMessageSummaryItem,
-  useAISMessageContext,
-} from '../ais-message';
+import { AISMap, AISMapControls, AISMapMovementControl, AISMapToggleLockControl } from '.';
+import { AISMessageSummary, AISMessageSummaryItem, useAISMessageContext } from '../ais-message';
 import {
   FaCaretDown,
   FaCaretLeft,

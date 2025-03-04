@@ -1,7 +1,49 @@
 services:
-  api:
+  api_development:
+    profiles:
+      - development
     build:
       context: ./api
+      target: development
+    environment:
+      - API_PORT=${API_PORT}
+      - AISSTREAM_API_KEY=${AISSTREAM_API_KEY}
+      - AISSTREAM_API_URL=${AISSTREAM_API_URL}
+      - FORCE_COLOR=${FORCE_COLOR}
+      - WAIT_TIME=${WAIT_TIME}
+    ports:
+      - 3000:3000
+    volumes:
+      - ./api/src:/app/src
+      - /app/node_modules
+
+  client_development:
+    profiles:
+      - development
+    build:
+      context: ./client
+      target: development
+      args:
+        - VITE_API_URL=${VITE_API_URL}
+        - VITE_MAPBOX_API_KEY=${VITE_MAPBOX_API_KEY}
+        - VITE_MAPBOX_STYLE_URL=${VITE_MAPBOX_STYLE_URL}
+    depends_on:
+      - api_development
+    environment:
+      - CLIENT_PORT=${CLIENT_PORT}
+    ports:
+      - 80:80
+      - 81:81
+    volumes:
+      - ./client/src:/app/src
+      - /app/node_modules
+
+  api_production:
+    profiles:
+      - production
+    build:
+      context: ./api
+      target: production
     environment:
       - API_PORT=${API_PORT}
       - AISSTREAM_API_KEY=${AISSTREAM_API_KEY}
@@ -11,16 +53,17 @@ services:
     ports:
       - 3000:3000
 
-  client:
+  client_production:
+    profiles:
+      - production
     build:
       context: ./client
+      target: production
       args:
         - VITE_API_URL=${VITE_API_URL}
         - VITE_MAPBOX_API_KEY=${VITE_MAPBOX_API_KEY}
         - VITE_MAPBOX_STYLE_URL=${VITE_MAPBOX_STYLE_URL}
     depends_on:
-      - api
-    environment:
-      - CLIENT_PORT=${CLIENT_PORT}
+      - api_production
     ports:
       - 80:80
