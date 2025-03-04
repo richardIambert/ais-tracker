@@ -16,30 +16,22 @@ const AISMap = () => {
     AISMapCtx.dispatch({ type: 'setBoundingBoxes', payload: boundingBoxes });
   }, 1000);
 
-  const onMoveEnd = debounce(({ target }) => {
+  const onMoveEnd = debounce(({ target, viewState }) => {
     const boundingBoxes = formatBoundingBoxes(target);
-    AISMapCtx.dispatch({ type: 'setBoundingBoxes', payload: boundingBoxes });
     AISMessageCtx.dispatch({
       type: 'removeOutOfBoundsMessages',
       payload: boundingBoxes[0],
     });
+    AISMapCtx.dispatch({ type: 'setBoundingBoxes', payload: boundingBoxes });
+    AISMapCtx.dispatch({ type: 'setViewState', payload: viewState });
   }, 1000);
-
-  const onIdle = () => {
-    if (AISMapCtx.state.ref) {
-      const currentZoom = AISMapCtx.state.ref.getZoom();
-      console.log(currentZoom, AISMapCtx.state.delta.pan);
-      AISMapCtx.dispatch({ type: 'setDeltaPan', payload: currentZoom });
-    }
-  };
 
   return (
     <Map
       {...AISMapCtx.state.attributes}
-      initialViewState={AISMapCtx.state.initialViewState}
+      initialViewState={AISMapCtx.state.viewState}
       onLoad={onLoad}
       onMoveEnd={onMoveEnd}
-      onIdle={onIdle}
     >
       {AISMessageCtx.state.messages.map((message) => (
         <AISMessageMarker

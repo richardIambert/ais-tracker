@@ -1,4 +1,10 @@
-import { AISMap, AISMapControls, AISMapMovementControl, AISMapToggleLockControl } from '.';
+import {
+  AISMap,
+  AISMapControls,
+  AISMapLatLngInput,
+  AISMapMovementControl,
+  AISMapToggleLockControl,
+} from '.';
 import { AISMessageSummary, AISMessageSummaryItem, useAISMessageContext } from '../ais-message';
 import {
   FaCaretDown,
@@ -75,6 +81,7 @@ const AISMapLayout = () => {
         >
           <FaMinus className="pointer-events-none" />
         </AISMapMovementControl>
+        <AISMapLatLngInput />
         <AISMapToggleLockControl />
       </AISMapControls>
       <AISMap />
