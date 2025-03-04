@@ -8,7 +8,6 @@ const useAISMapContext = () => {
 };
 
 const initialState = {
-  ref: null,
   attributes: {
     mapboxAccessToken: import.meta.env.VITE_MAPBOX_API_KEY,
     mapStyle: import.meta.env.VITE_MAPBOX_STYLE_URL,
@@ -17,11 +16,11 @@ const initialState = {
     minPitch: 0,
     maxPitch: 0,
     minZoom: 11,
-    maxZoom: 16,
+    maxZoom: 13,
   },
   BoundingBoxes: null,
   delta: {
-    pan: 0.05,
+    pan: 0.1,
     zoom: 1,
   },
   initialViewState: {
@@ -30,6 +29,7 @@ const initialState = {
     zoom: 11,
   },
   isLocked: false,
+  ref: null,
 };
 
 const reducer = (state, { type, payload }) => {
@@ -38,6 +38,15 @@ const reducer = (state, { type, payload }) => {
       return {
         ...state,
         BoundingBoxes: payload,
+      };
+    }
+    case 'setDeltaPan': {
+      return {
+        ...state,
+        delta: {
+          ...state.delta,
+          pan: { 11: 0.1, 12: 0.05, 13: 0.025 }[payload],
+        },
       };
     }
     case 'setRef': {

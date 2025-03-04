@@ -25,12 +25,21 @@ const AISMap = () => {
     });
   }, 1000);
 
+  const onIdle = () => {
+    if (AISMapCtx.state.ref) {
+      const currentZoom = AISMapCtx.state.ref.getZoom();
+      console.log(currentZoom, AISMapCtx.state.delta.pan);
+      AISMapCtx.dispatch({ type: 'setDeltaPan', payload: currentZoom });
+    }
+  };
+
   return (
     <Map
       {...AISMapCtx.state.attributes}
       initialViewState={AISMapCtx.state.initialViewState}
       onLoad={onLoad}
       onMoveEnd={onMoveEnd}
+      onIdle={onIdle}
     >
       {AISMessageCtx.state.messages.map((message) => (
         <AISMessageMarker

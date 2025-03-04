@@ -20,10 +20,10 @@ const AISMapMovementControl = ({ children, ...rest }) => {
           return mapRef.panTo([lng, lat - deltaPan], { duration: 1000 });
         }
         case 'pan-left': {
-          return mapRef.panTo([lng - deltaPan, lat], { duration: 1000 });
+          return mapRef.panTo([lng - deltaPan * 2, lat], { duration: 1000 });
         }
         case 'pan-right': {
-          return mapRef.panTo([lng + deltaPan, lat], { duration: 1000 });
+          return mapRef.panTo([lng + deltaPan * 2, lat], { duration: 1000 });
         }
         case 'zoom-in': {
           return mapRef.zoomTo(zoom + deltaZoom, { duration: 1000 });
