@@ -3,10 +3,10 @@
 AIS Tracker is a web application that tracks real-time ship movements.
 
 ![ais-tracker-screenshot-0](./ais-tracker-screenshot-0.png)
-_AIS Tracker App - HMS Mersey departing Faslane_
+_AIS Tracker - HMS Mersey departing Faslane_
 
 ![ais-tracker-screenshot-1](./ais-tracker-screenshot-1.png)
-_AIS Tracker App - Busy Portsmouth Harbour_
+_AIS Tracker - Busy Portsmouth Harbour_
 
 ## Setup
 
