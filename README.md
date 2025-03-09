@@ -10,7 +10,7 @@ _AIS Tracker - Busy Portsmouth Harbour_
 
 ## Setup
 
-**Note**: Setup requires a [Docker](https://docs.docker.com/get-started/introduction/get-docker-desktop/) installation and the setup of free third-party API keys from [aisstream.io](https://aisstream.io) and [mapbox](https://mapbox.com).
+**Note**: ais-tracker uses third-party API keys from [aisstream.io](https://aisstream.io) and [mapbox](https://mapbox.com). These keys are free but require users to register and account.
 
 #### 1. Clone the repository
 
