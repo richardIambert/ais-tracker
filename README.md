@@ -10,7 +10,7 @@ _AIS Tracker - Busy Portsmouth Harbour_
 
 ## Setup
 
-**Note**: ais-tracker uses third-party API keys from [aisstream.io](https://aisstream.io) and [mapbox](https://mapbox.com). These keys are free but require users to register and account.
+**Note**: ais-tracker uses third-party API keys from [aisstream.io](https://aisstream.io) and [mapbox](https://mapbox.com). These keys are free but require users to register an account.
 
 #### 1. Clone the repository
 
